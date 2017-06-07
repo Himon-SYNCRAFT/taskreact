@@ -1,0 +1,7 @@
+{
+    "extends": "react",
+    "rules": {
+        "semi": [2, "never"],
+        "space-before-function-paren": ["error", "never"],
+    }
+}

@@ -3,17 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint-config-react": "^1.1.7",
+    "eslint-plugin-compat": "^1.0.3",
+    "eslint-plugin-react": "^7.0.1",
     "react-scripts": "1.0.7"
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "bootstrap": "^3.3.7",
+    "flux": "^3.1.2",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-bootstrap": "^0.31.0",
+    "react-dom": "^15.5.4",
+    "react-router": "^4.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint"
   }
 }
