@@ -3,6 +3,7 @@ import { EvenEmitter } from 'events'
 import { GET_ALL_TASKS } from '../Constants'
 
 
+const CHANGE = 'CHANGE'
 let _tasks = []
 
 const TasksStore = Object.assign({}, EvenEmitter.prototype, {
@@ -12,6 +13,8 @@ const TasksStore = Object.assign({}, EvenEmitter.prototype, {
 Dispatcher.register(action => {
     switch (action.actionType) {
         case GET_ALL_TASKS:
+            _tasks = action.data
+            TasksStore.Emit(CHANGE)
             break
     }
 })

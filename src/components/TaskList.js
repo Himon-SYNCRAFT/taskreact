@@ -52,7 +52,7 @@ class TaskItem extends Component {
         return (
             <Row>
                 <Col md={7}>
-                    <span>{this.props.task.name} </span>
+                    <span style={{lineHeight: "34px"}}>{this.props.task.name} </span>
                 </Col>
                 <Col md={5}>
                     <ButtonGroup>
