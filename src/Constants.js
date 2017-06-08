@@ -1,8 +1,9 @@
-import keymirror from 'key-mirror'
+const GET_ALL_TASKS = 'GET_ALL_TASKS'
+const GET_NOT_COMPLETED_TASKS = 'GET_NOT_COMPLETED_TASKS'
+const ASSIGN_TASK = 'ASSIGN_TASK'
+const UNASSIGN_TASK = 'UNASSIGN_TASK'
 
-const constants = keymirror({
-    GET_ALL_TASKS: null
-})
+const LOG_IN = 'LOG_IN'
 
 
-export default constants
+export { GET_ALL_TASKS, GET_NOT_COMPLETED_TASKS, ASSIGN_TASK, LOG_IN, UNASSIGN_TASK }
