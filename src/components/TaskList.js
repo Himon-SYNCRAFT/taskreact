@@ -122,7 +122,7 @@ TaskItem.propTypes = {
 
 function TaskDetails(props) {
     const creator = props.task.creator.name
-    const doer = props.task.doer.name || 'Not assigned'
+    const doer = props.task.doer ? props.task.doer.name : 'Not assigned'
     const taskName = props.task.name
     const content = props.task.content
     const buttonAssignText = props.assignedToTask ? "Unassign" : "Assign"

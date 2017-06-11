@@ -1,4 +1,4 @@
-import { GET_ALL_TASKS, ASSIGN_TASK, UNASSIGN_TASK, GET_NOT_COMPLETED_TASKS } from '../Constants'
+import { GET_ALL_TASKS, ADD_TASK, ASSIGN_TASK, UNASSIGN_TASK, GET_NOT_COMPLETED_TASKS } from '../Constants'
 import Dispatcher from '../Dispatcher'
 import Api from '../Api'
 
@@ -12,6 +12,22 @@ const TasksActions = {
                     data: response.data
                 })
             })
+            .catch(error => {
+                console.log(error)
+            })
+    },
+
+    add: (data) => {
+        Api.tasks.add(data)
+            .then(response => {
+                Dispatcher.dispatch({
+                    actionType: ADD_TASK,
+                    data: response.data
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
     },
 
     notCompleted: () => {
@@ -21,6 +37,9 @@ const TasksActions = {
                     actionType: GET_NOT_COMPLETED_TASKS,
                     data: response.data
                 })
+            })
+            .catch(error => {
+                console.log(error)
             })
     },
 
@@ -32,6 +51,9 @@ const TasksActions = {
                     data: response.data
                 })
             })
+            .catch(error => {
+                console.log(error)
+            })
     },
 
     unassignTask: (taskId) => {
@@ -41,6 +63,9 @@ const TasksActions = {
                     actionType: UNASSIGN_TASK,
                     data: response.data
                 })
+            })
+            .catch(error => {
+                console.log(error)
             })
     }
 }
