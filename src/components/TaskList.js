@@ -124,6 +124,7 @@ function TaskDetails(props) {
     const creator = props.task.creator.name
     const doer = props.task.doer ? props.task.doer.name : 'Not assigned'
     const taskName = props.task.name
+    const status = props.task.status.name
     const content = props.task.content
     const buttonAssignText = props.assignedToTask ? "Unassign" : "Assign"
 
@@ -131,7 +132,7 @@ function TaskDetails(props) {
         <div>
             <Modal show={props.show} onHide={props.close}>
                 <Modal.Header>
-                    <Modal.Title>{taskName}</Modal.Title>
+                    <Modal.Title>{taskName} ({status})</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
@@ -168,6 +169,9 @@ TaskDetails.propTypes = {
     task: PropTypes.shape({
         name: PropTypes.string.isRequired,
         creator: PropTypes.shape({
+            name: PropTypes.string.isRequired
+        }),
+        status: PropTypes.shape({
             name: PropTypes.string.isRequired
         }),
         doer: PropTypes.shape({

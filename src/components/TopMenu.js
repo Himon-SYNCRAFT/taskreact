@@ -1,15 +1,31 @@
 import React from 'react'
 import { Navbar, NavItem, Nav } from 'react-bootstrap'
 import { IndexLinkContainer } from 'react-router-bootstrap'
+import PropTypes from 'prop-types'
+import AuthActions from '../actions/AuthActions'
 
 
 class TopMenu extends React.Component {
     constructor(props) {
         super(props)
         this.state = {}
+        this.onClickLogOut = this.onClickLogOut.bind(this)
+    }
+
+    onClickLogOut(event) {
+        event.preventDefault()
+        AuthActions.logout()
     }
 
     render() {
+        const authLinks = this.props.isLogged ? (
+            <NavItem onClick={this.onClickLogOut}>Log Out</NavItem>
+        ) : (
+            <IndexLinkContainer to="/login">
+                <NavItem>Log In</NavItem>
+            </IndexLinkContainer>
+        )
+
         return (
             <Navbar inverse collapseOnSelect>
                 <Navbar.Header>
@@ -25,14 +41,16 @@ class TopMenu extends React.Component {
                         <IndexLinkContainer to="/task/add">
                             <NavItem>Add task</NavItem>
                         </IndexLinkContainer>
-                        <IndexLinkContainer to="/login">
-                            <NavItem>Profile</NavItem>
-                        </IndexLinkContainer>
+                        {authLinks}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
         )
     }
+}
+
+TopMenu.propTypes = {
+    isLogged: PropTypes.bool.isRequired
 }
 
 

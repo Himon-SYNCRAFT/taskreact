@@ -1,6 +1,8 @@
+import AuthActions from '../actions/AuthActions'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { PageHeader, Button, Form, FormControl, FormGroup, ControlLabel, Col } from 'react-bootstrap'
-import AuthActions from '../actions/AuthActions'
+import { Redirect } from 'react-router'
 
 
 class LoginForm extends React.Component {
@@ -33,7 +35,12 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        return (
+        return this.props.isLogged ? (
+            <Redirect to={{
+                pathname: '/',
+                state: { from: this.props.location }
+            }}/>
+        ) : (
             <div>
                 <PageHeader>Login Form</PageHeader>
                 <Form horizontal onSubmit={this.onSubmit}>
@@ -66,5 +73,9 @@ class LoginForm extends React.Component {
     }
 }
 
+LoginForm.propTypes = {
+    isLogged: PropTypes.bool.isRequired,
+    location: PropTypes.object
+}
 
 export default LoginForm

@@ -1,4 +1,4 @@
-import { LOG_IN } from '../Constants'
+import { LOG_IN, LOG_OUT } from '../Constants'
 import Api from '../Api'
 import Dispatcher from '../Dispatcher'
 
@@ -9,6 +9,16 @@ const actions = {
             .then(response => {
                 Dispatcher.dispatch({
                     actionType: LOG_IN,
+                    data: response.data
+                })
+            })
+    },
+
+    logout: () => {
+        Api.auth.logout()
+            .then(response => {
+                Dispatcher.dispatch({
+                    actionType: LOG_OUT,
                     data: response.data
                 })
             })

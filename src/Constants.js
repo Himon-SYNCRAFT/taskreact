@@ -5,6 +5,8 @@ const UNASSIGN_TASK = 'UNASSIGN_TASK'
 const ADD_TASK = 'ADD_TASK'
 
 const LOG_IN = 'LOG_IN'
+const LOG_OUT = 'LOG_OUT'
+const UNAUTHORIZED = 'UNAUTHORIZED'
 
 
 export {
@@ -12,6 +14,8 @@ export {
     GET_NOT_COMPLETED_TASKS,
     ASSIGN_TASK,
     LOG_IN,
+    LOG_OUT,
+    UNAUTHORIZED,
     UNASSIGN_TASK,
     ADD_TASK
 }
