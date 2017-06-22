@@ -19,7 +19,7 @@ class TopMenu extends React.Component {
 
     render() {
         const authLinks = this.props.isLogged ? (
-            <NavItem onClick={this.onClickLogOut}>Log Out</NavItem>
+            <NavItem onClick={this.onClickLogOut}>Log Out ({this.props.user.name})</NavItem>
         ) : (
             <IndexLinkContainer to="/login">
                 <NavItem>Log In</NavItem>
@@ -50,7 +50,10 @@ class TopMenu extends React.Component {
 }
 
 TopMenu.propTypes = {
-    isLogged: PropTypes.bool.isRequired
+    isLogged: PropTypes.bool.isRequired,
+    user: PropTypes.shape({
+        name: PropTypes.string.isRequired
+    })
 }
 
 

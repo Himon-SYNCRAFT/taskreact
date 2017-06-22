@@ -3,6 +3,7 @@ import { Row, Col, ListGroup, ListGroupItem, Button, ButtonGroup, Glyphicon, Mod
 import TasksStore from '../stores/TasksStore'
 import TasksActions from '../actions/TasksActions'
 import PropTypes from 'prop-types'
+import TaskForm from './TaskForm'
 
 
 class TaskList extends Component {
@@ -30,11 +31,10 @@ class TaskList extends Component {
     }
 
     render() {
-        const userId = this.props.user ? this.props.user.id : null
         const items = this.state.tasks.map((task, index) => {
             return (
                 <ListGroupItem key={index}>
-                    <TaskItem task={task} userId={userId} />
+                    <TaskItem task={task} user={this.props.user} />
                 </ListGroupItem>
             )
         })
@@ -47,15 +47,24 @@ class TaskList extends Component {
     }
 }
 
+TaskList.propTypes = {
+    user: PropTypes.shape({
+        id: PropTypes.number.isRequired
+    })
+}
+
 class TaskItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            showModal: false
+            showDetailsModal: false,
+            showEditModal: false
         }
 
-        this.close = this.close.bind(this)
-        this.open = this.open.bind(this)
+        this.closeDetailsModal = this.closeDetailsModal.bind(this)
+        this.openDetailsModal = this.openDetailsModal.bind(this)
+        this.closeEditModal = this.closeEditModal.bind(this)
+        this.openEditModal = this.openEditModal.bind(this)
         this.toggleAssign = this.toggleAssign.bind(this)
         this.isUserAssignedToTask = this.isUserAssignedToTask.bind(this)
         this.completeTask = this.completeTask.bind(this)
@@ -67,15 +76,31 @@ class TaskItem extends Component {
             return false
         }
 
-        return this.props.task.doer.id === this.props.userId
+        return this.props.task.doer.id === this.props.user.id
     }
 
-    close() {
-        this.setState({ showModal: false })
+    isTaskCreatedByUser() {
+        if (!this.props.task.creator) {
+            return false
+        }
+
+        return this.props.task.creator.id === this.props.user.id
     }
 
-    open() {
-        this.setState({ showModal: true })
+    closeDetailsModal() {
+        this.setState({ showDetailsModal: false })
+    }
+
+    openDetailsModal() {
+        this.setState({ showDetailsModal: true })
+    }
+
+    closeEditModal() {
+        this.setState({ showEditModal: false })
+    }
+
+    openEditModal() {
+        this.setState({ showEditModal: true })
     }
 
     toggleAssign() {
@@ -100,7 +125,7 @@ class TaskItem extends Component {
         const doer = this.props.task.doer
 
         let buttons = [
-            <Button key={0} onClick={this.open}>
+            <Button key={0} onClick={this.openDetailsModal}>
                 <Glyphicon glyph="eye-open" /> Show
             </Button>
         ]
@@ -129,6 +154,14 @@ class TaskItem extends Component {
             )
         }
 
+        if (this.isTaskCreatedByUser()) {
+            buttons.push(
+                <Button key={buttons.length + 1} onClick={this.openEditModal}>
+                    <Glyphicon glyph="edit" /> Edit
+                </Button>
+            )
+        }
+
         return (
             <Row>
                 <Col md={7}>
@@ -140,13 +173,19 @@ class TaskItem extends Component {
                     </ButtonGroup>
                 </Col>
                 <TaskDetails
-                    show={this.state.showModal}
+                    show={this.state.showDetailsModal}
                     task={this.props.task}
-                    close={this.close}
+                    close={this.closeDetailsModal}
                     toggleAssign={this.toggleAssign}
                     completeTask={this.completeTask}
                     cancelTask={this.cancelTask}
                     assignedToTask={this.isUserAssignedToTask()}
+                />
+                <EditTask
+                    show={this.state.showEditModal}
+                    close={this.closeEditModal}
+                    task={this.props.task}
+                    user={this.props.user}
                 />
             </Row>
         )
@@ -159,9 +198,14 @@ TaskItem.propTypes = {
         name: PropTypes.string.isRequired,
         doer: PropTypes.shape({
             id: PropTypes.number.isRequired
+        }),
+        creator: PropTypes.shape({
+            id: PropTypes.number.isRequired
         })
     }),
-    userId: PropTypes.number
+    user: PropTypes.shape({
+        id: PropTypes.number.isRequired
+    })
 }
 
 
@@ -177,7 +221,16 @@ function TaskDetails(props) {
         <div>
             <Modal show={props.show} onHide={props.close}>
                 <Modal.Header>
-                    <Modal.Title>{taskName} ({status})</Modal.Title>
+                    <Modal.Title>
+                        <Row>
+                            <Col md={11}>{taskName} ({status})</Col>
+                            <Col md={1} offset={11}>
+                                <Button onClick={props.close} bsStyle="danger" bsSize="xsmall">
+                                    <Glyphicon glyph="remove"/>
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
@@ -209,7 +262,6 @@ function TaskDetails(props) {
     )
 }
 
-
 TaskDetails.propTypes = {
     task: PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -232,5 +284,47 @@ TaskDetails.propTypes = {
     assignedToTask: PropTypes.bool.isRequired
 }
 
+
+function EditTask(props) {
+    return (
+        <Modal show={props.show} onHide={props.close}>
+            <Modal.Header>
+                <Modal.Title>
+                    <Row>
+                        <Col md={11}>{props.task.name}</Col>
+                        <Col md={1} offset={11}>
+                            <Button onClick={props.close} bsStyle="danger" bsSize="xsmall">
+                                <Glyphicon glyph="remove"/>
+                            </Button>
+                        </Col>
+                    </Row>
+                </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <TaskForm task={props.task} user={props.user} />
+            </Modal.Body>
+
+            <Modal.Footer>
+                <Button onClick={props.close} bsStyle="primary">
+                    <Glyphicon glyph="remove"/> Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )
+}
+
+EditTask.propTypes = {
+    task: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired
+    }),
+    user: PropTypes.shape({
+        id: PropTypes.number.isRequired
+    }),
+    show: PropTypes.bool.isRequired,
+    close: PropTypes.func.isRequired
+}
 
 export { TaskList, TaskItem }

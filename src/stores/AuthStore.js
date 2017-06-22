@@ -20,6 +20,14 @@ const AuthStore = Object.assign({}, EventEmitter.prototype, {
         this.removeListener(UNAUTHORIZED, callback)
     },
 
+    addLogOutListener: function(callback) {
+        this.on(LOG_OUT, callback)
+    },
+
+    removeLogOutListener: function(callback) {
+        this.removeListener(LOG_OUT, callback)
+    },
+
     get: function() {
         if (!this.isLogged()) {
             return {}
@@ -49,10 +57,13 @@ Dispatcher.register(action => {
             break
 
         case UNAUTHORIZED:
+            AuthStore.emit(UNAUTHORIZED)
+            break
+
         case LOG_OUT:
             localStorage.removeItem('userId')
             localStorage.removeItem('userName')
-            AuthStore.emit(UNAUTHORIZED)
+            AuthStore.emit(LOG_OUT)
             break
 
         default:

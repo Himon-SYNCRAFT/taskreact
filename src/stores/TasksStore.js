@@ -1,7 +1,7 @@
 import Dispatcher from '../Dispatcher'
 import { EventEmitter } from 'events'
 import { GET_ALL_TASKS, GET_NOT_COMPLETED_TASKS, ASSIGN_TASK, UNASSIGN_TASK,
-    COMPLETE_TASK, CANCEL_TASK } from '../Constants'
+    COMPLETE_TASK, CANCEL_TASK, UPDATE_TASK } from '../Constants'
 
 
 const CHANGE = 'CHANGE'
@@ -35,6 +35,7 @@ Dispatcher.register(action => {
         case UNASSIGN_TASK:
         case COMPLETE_TASK:
         case CANCEL_TASK:
+        case UPDATE_TASK:
             const taskId = action.data.id
             const index = _tasks.findIndex(item => item.id === taskId)
 

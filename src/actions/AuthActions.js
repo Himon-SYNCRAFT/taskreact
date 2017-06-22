@@ -1,4 +1,4 @@
-import { LOG_IN, LOG_OUT } from '../Constants'
+import { LOG_IN, LOG_OUT, UNAUTHORIZED } from '../Constants'
 import Api from '../Api'
 import Dispatcher from '../Dispatcher'
 
@@ -21,6 +21,12 @@ const actions = {
                     actionType: LOG_OUT
                 })
             })
+    },
+
+    notAuthorized: () => {
+        Dispatcher.dispatch({
+            actionType: UNAUTHORIZED
+        })
     }
 }
 

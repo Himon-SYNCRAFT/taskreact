@@ -1,5 +1,5 @@
 import { COMPLETE_TASK, GET_ALL_TASKS, ADD_TASK, ASSIGN_TASK, UNASSIGN_TASK,
-    GET_NOT_COMPLETED_TASKS, CANCEL_TASK } from '../Constants'
+    GET_NOT_COMPLETED_TASKS, CANCEL_TASK, UPDATE_TASK } from '../Constants'
 import Dispatcher from '../Dispatcher'
 import Api from '../Api'
 
@@ -23,6 +23,19 @@ const TasksActions = {
             .then(response => {
                 Dispatcher.dispatch({
                     actionType: ADD_TASK,
+                    data: response.data
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    },
+
+    update: (taskId, data) => {
+        Api.tasks.update(taskId, data)
+            .then(response => {
+                Dispatcher.dispatch({
+                    actionType: UPDATE_TASK,
                     data: response.data
                 })
             })

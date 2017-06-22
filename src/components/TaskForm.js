@@ -1,17 +1,26 @@
 import React from 'react'
 import TasksActions from '../actions/TasksActions'
 import { PageHeader, Button, Form, FormControl, FormGroup, ControlLabel, Col } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 
 class TaskForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
+        let state = {
             content: "",
             name: "",
             nameErrors: [],
             contentErrors: []
         }
+
+        if (this.props.task) {
+            const task = this.props.task
+            state.content = task.content
+            state.name = task.name
+        }
+
+        this.state = state
 
         this.onChangeContent = this.onChangeContent.bind(this)
         this.onChangeName = this.onChangeName.bind(this)
@@ -71,11 +80,18 @@ class TaskForm extends React.Component {
             return
         }
 
-        TasksActions.add({
-            creator_id: 1,
-            name: this.state.name,
-            content: this.state.content
-        })
+        if (this.props.task && this.props.task.id) {
+            TasksActions.update(this.props.task.id, {
+                name: this.state.name,
+                content: this.state.content
+            })
+        } else {
+            TasksActions.add({
+                creator_id: this.props.user.id,
+                name: this.state.name,
+                content: this.state.content
+            })
+        }
     }
 
     render() {
@@ -96,6 +112,7 @@ class TaskForm extends React.Component {
                                 onChange={this.onChangeName}
                                 type="text"
                                 placeholder="Enter task's name"
+                                value={this.state.name}
                             />
                         </Col>
                     </FormGroup>
@@ -106,6 +123,7 @@ class TaskForm extends React.Component {
                                 onChange={this.onChangeContent}
                                 componentClass="textarea"
                                 placeholder="Enter task's decription"
+                                value={this.state.content}
                             />
                         </Col>
                     </FormGroup>
@@ -123,6 +141,17 @@ class TaskForm extends React.Component {
             </div>
         )
     }
+}
+
+TaskForm.propTypes = {
+    task: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired
+    }),
+    user: PropTypes.shape({
+        id: PropTypes.number.isRequired
+    })
 }
 
 

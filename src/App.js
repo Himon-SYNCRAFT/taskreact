@@ -5,6 +5,7 @@ import { TaskList } from './components/TaskList'
 import LoginForm from './components/LoginForm'
 import TopMenu from './components/TopMenu'
 import TaskForm from './components/TaskForm'
+import ErrorModal from './components/ErrorModal'
 import AuthStore from './stores/AuthStore'
 import PropTypes from 'prop-types'
 
@@ -14,21 +15,28 @@ class App extends Component {
 
         this.state = {
             user: null,
-            isLogged: false
+            isLogged: false,
+            showErrorModal: false,
+            errorMessage: '',
+            errorTitle: ''
         }
 
         this.onChange = this.onChange.bind(this)
+        this.onNotAuthorized = this.onNotAuthorized.bind(this)
+        this.closeErrorModal = this.closeErrorModal.bind(this)
     }
 
     componentDidMount() {
         AuthStore.addLogInListener(this.onChange)
-        AuthStore.addUnauthorizedListener(this.onChange)
+        AuthStore.addUnauthorizedListener(this.onNotAuthorized)
+        AuthStore.addLogInListener(this.onChange)
         this.onChange()
     }
 
     componentWillUnmount() {
         AuthStore.removeChangeListener(this.onChange)
-        AuthStore.removeUnauthorizedListener(this.onChange)
+        AuthStore.removeUnauthorizedListener(this.onNotAuthorized)
+        AuthStore.removeLogOutListener(this.onChange)
     }
 
     onChange() {
@@ -38,11 +46,27 @@ class App extends Component {
         })
     }
 
+    onNotAuthorized() {
+        this.setState({
+            errorTitle: 'Unauthorized Activity',
+            errorMessage: "You are not authorized to execute requested activity",
+            showErrorModal: true
+        })
+    }
+
+    closeErrorModal() {
+        this.setState({
+            showErrorModal: false,
+            errorTitle: '',
+            errorMessage: ""
+        })
+    }
+
     render() {
         return (
             <Router>
                 <div className="App">
-                    <TopMenu isLogged={this.state.isLogged} />
+                    <TopMenu isLogged={this.state.isLogged} user={this.state.user} />
                     <Grid>
                         <PrivateRoute exact path="/" component={TaskList} user={this.state.user} />
                         <PrivateRoute path="/task/add" component={TaskForm} user={this.state.user}/>
@@ -52,6 +76,12 @@ class App extends Component {
                             )
                         }}/>
                     </Grid>
+                <ErrorModal
+                    show={this.state.showErrorModal}
+                    close={this.closeErrorModal}
+                    title={this.state.errorTitle}
+                    body={this.state.errorMessage}
+                />
                 </div>
             </Router>
         )

@@ -11,10 +11,15 @@ const instance = axios.create({
 instance.interceptors.response.use(response => {
     return response
 }, error => {
-    console.log(error.response.status);
     if (error.response.status === 401) {
         AuthActions.logout()
     }
+
+    if (error.response.status === 403) {
+        AuthActions.notAuthorized()
+    }
+
+    return error
 })
 
 const Api = {
@@ -54,6 +59,10 @@ const Api = {
 
         cancelTask: (taskId) => {
             return instance.get('/task/' + taskId + '/cancel')
+        },
+
+        update: (taskId, data) => {
+            return instance.put('/task/' + taskId, data)
         }
     },
 
