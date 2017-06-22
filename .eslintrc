@@ -3,5 +3,8 @@
     "rules": {
         "semi": [2, "never"],
         "space-before-function-paren": ["error", "never"],
+    },
+    "env": {
+        "browser": true
     }
 }

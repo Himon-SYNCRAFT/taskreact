@@ -30,9 +30,12 @@ class TaskList extends Component {
     }
 
     render() {
+        const userId = this.props.user ? this.props.user.id : null
         const items = this.state.tasks.map((task, index) => {
             return (
-                <ListGroupItem key={index}><TaskItem task={task} /></ListGroupItem>
+                <ListGroupItem key={index}>
+                    <TaskItem task={task} userId={userId} />
+                </ListGroupItem>
             )
         })
 
@@ -48,13 +51,23 @@ class TaskItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            showModal: false,
-            assignedToTask: props.task.id === 1
+            showModal: false
         }
 
         this.close = this.close.bind(this)
         this.open = this.open.bind(this)
         this.toggleAssign = this.toggleAssign.bind(this)
+        this.isUserAssignedToTask = this.isUserAssignedToTask.bind(this)
+        this.completeTask = this.completeTask.bind(this)
+        this.cancelTask = this.cancelTask.bind(this)
+    }
+
+    isUserAssignedToTask() {
+        if (!this.props.task.doer) {
+            return false
+        }
+
+        return this.props.task.doer.id === this.props.userId
     }
 
     close() {
@@ -66,19 +79,56 @@ class TaskItem extends Component {
     }
 
     toggleAssign() {
-        if (!this.state.assignedToTask) {
+        if (!this.isUserAssignedToTask()) {
             const taskId = this.props.task.id
-            const userId = 1
-
-            TasksActions.assignTask(taskId, userId)
+            TasksActions.assignTask(taskId)
         } else {
             const taskId = this.props.task.id
             TasksActions.unassignTask(taskId)
         }
     }
 
+    completeTask() {
+        TasksActions.completeTask(this.props.task.id)
+    }
+
+    cancelTask() {
+        TasksActions.cancelTask(this.props.task.id)
+    }
+
     render() {
-        const buttonAssignText = this.state.assignedToTask ? "Unassign" : "Assign"
+        const doer = this.props.task.doer
+
+        let buttons = [
+            <Button key={0} onClick={this.open}>
+                <Glyphicon glyph="eye-open" /> Show
+            </Button>
+        ]
+
+        if (!doer) {
+            buttons.push(
+                <Button key={buttons.length + 1} onClick={this.toggleAssign}>
+                    <Glyphicon glyph="user" /> Assign
+                </Button>
+            )
+        } else if (this.isUserAssignedToTask()) {
+            buttons.push(
+                <Button key={buttons.length + 1} onClick={this.toggleAssign}>
+                    <Glyphicon glyph="user" /> Unassign
+                </Button>
+            )
+            buttons.push(
+                <Button key={buttons.length + 1} onClick={this.completeTask}>
+                    <Glyphicon glyph="check" /> Complete
+                </Button>
+            )
+            buttons.push(
+                <Button key={buttons.length + 1} onClick={this.cancelTask}>
+                    <Glyphicon glyph="ban-circle"/> Cancel
+                </Button>
+            )
+        }
+
         return (
             <Row>
                 <Col md={7}>
@@ -86,18 +136,7 @@ class TaskItem extends Component {
                 </Col>
                 <Col md={5}>
                     <ButtonGroup>
-                        <Button onClick={this.open}>
-                            <Glyphicon glyph="eye-open" /> Show
-                        </Button>
-                        <Button onClick={this.toggleAssign}>
-                            <Glyphicon glyph="user" /> {buttonAssignText}
-                        </Button>
-                        <Button>
-                            <Glyphicon glyph="check" /> Complete
-                        </Button>
-                        <Button>
-                            <Glyphicon glyph="ban-circle"/> Cancel
-                        </Button>
+                        {buttons}
                     </ButtonGroup>
                 </Col>
                 <TaskDetails
@@ -105,7 +144,9 @@ class TaskItem extends Component {
                     task={this.props.task}
                     close={this.close}
                     toggleAssign={this.toggleAssign}
-                    assignedToTask={this.state.assignedToTask}
+                    completeTask={this.completeTask}
+                    cancelTask={this.cancelTask}
+                    assignedToTask={this.isUserAssignedToTask()}
                 />
             </Row>
         )
@@ -115,8 +156,12 @@ class TaskItem extends Component {
 TaskItem.propTypes = {
     task: PropTypes.shape({
         id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired
-    })
+        name: PropTypes.string.isRequired,
+        doer: PropTypes.shape({
+            id: PropTypes.number.isRequired
+        })
+    }),
+    userId: PropTypes.number
 }
 
 
@@ -146,10 +191,10 @@ function TaskDetails(props) {
                         <Button onClick={props.toggleAssign}>
                             <Glyphicon glyph="user" /> { buttonAssignText }
                         </Button>
-                        <Button>
+                        <Button onClick={props.completeTask}>
                             <Glyphicon glyph="check" /> Complete
                         </Button>
-                        <Button>
+                        <Button onClick={props.cancelTask}>
                             <Glyphicon glyph="ban-circle"/> Cancel
                         </Button>
                     </ButtonGroup>
@@ -182,6 +227,8 @@ TaskDetails.propTypes = {
     show: PropTypes.bool.isRequired,
     close: PropTypes.func.isRequired,
     toggleAssign: PropTypes.func.isRequired,
+    completeTask: PropTypes.func.isRequired,
+    cancelTask: PropTypes.func.isRequired,
     assignedToTask: PropTypes.bool.isRequired
 }
 

@@ -18,8 +18,7 @@ const actions = {
         Api.auth.logout()
             .then(response => {
                 Dispatcher.dispatch({
-                    actionType: LOG_OUT,
-                    data: response.data
+                    actionType: LOG_OUT
                 })
             })
     }

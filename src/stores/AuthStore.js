@@ -25,7 +25,7 @@ const AuthStore = Object.assign({}, EventEmitter.prototype, {
             return {}
         }
 
-        const userId = localStorage.getItem('userId')
+        const userId = parseInt(localStorage.getItem('userId'), 10)
         const userName = localStorage.getItem('userName')
 
         return {

@@ -1,10 +1,20 @@
 import axios from 'axios'
+import AuthActions from './actions/AuthActions'
 
 
 const instance = axios.create({
-    baseURL: 'http://danielzawlocki.pl/taskplus/api/',
-    // baseURL: 'http://127.0.0.1:5000/',
+    // baseURL: 'http://danielzawlocki.pl/taskplus/api/',
+    baseURL: 'http://127.0.0.1:5000/',
     withCredentials: true
+})
+
+instance.interceptors.response.use(response => {
+    return response
+}, error => {
+    console.log(error.response.status);
+    if (error.response.status === 401) {
+        AuthActions.logout()
+    }
 })
 
 const Api = {
@@ -30,12 +40,20 @@ const Api = {
             return instance.get('/tasks/notcompleted')
         },
 
-        assignTask: (taskId, userId) => {
-            return instance.get('/task/' + taskId + '/assign/' + userId)
+        assignTask: (taskId) => {
+            return instance.get('/task/' + taskId + '/assign')
         },
 
         unassignTask: (taskId) => {
             return instance.get('/task/' + taskId + '/unassign')
+        },
+
+        completeTask: (taskId) => {
+            return instance.get('/task/' + taskId + '/complete')
+        },
+
+        cancelTask: (taskId) => {
+            return instance.get('/task/' + taskId + '/cancel')
         }
     },
 

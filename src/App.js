@@ -6,7 +6,7 @@ import LoginForm from './components/LoginForm'
 import TopMenu from './components/TopMenu'
 import TaskForm from './components/TaskForm'
 import AuthStore from './stores/AuthStore'
-
+import PropTypes from 'prop-types'
 
 class App extends Component {
     constructor(props) {
@@ -44,8 +44,8 @@ class App extends Component {
                 <div className="App">
                     <TopMenu isLogged={this.state.isLogged} />
                     <Grid>
-                        <PrivateRoute exact path="/" component={TaskList} />
-                        <PrivateRoute path="/task/add" component={TaskForm} />
+                        <PrivateRoute exact path="/" component={TaskList} user={this.state.user} />
+                        <PrivateRoute path="/task/add" component={TaskForm} user={this.state.user}/>
                         <Route path="/login" render={() => {
                             return (
                                 <LoginForm isLogged={this.state.isLogged} />
@@ -59,10 +59,10 @@ class App extends Component {
 }
 
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const PrivateRoute = ({ component: Component, user, ...rest }) => (
     <Route {...rest} render={props => (
         AuthStore.isLogged() ? (
-            <Component {...props}/>
+            <Component {...props} user={user} />
         ) : (
                 <Redirect to={{
                     pathname: '/login',
@@ -71,5 +71,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
         )
     )}/>
 )
+
+PrivateRoute.propTypes = {
+    component: PropTypes.func.isRequired,
+    user: PropTypes.object,
+    location: PropTypes.object
+}
 
 export default App
