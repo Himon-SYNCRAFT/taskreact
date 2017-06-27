@@ -1,7 +1,7 @@
 import Dispatcher from '../Dispatcher'
 import { EventEmitter } from 'events'
 import { GET_ALL_TASKS, GET_NOT_COMPLETED_TASKS, ASSIGN_TASK, UNASSIGN_TASK,
-    COMPLETE_TASK, CANCEL_TASK, UPDATE_TASK } from '../Constants'
+    COMPLETE_TASK, CANCEL_TASK, UPDATE_TASK, ADD_TASK } from '../Constants'
 
 
 const CHANGE = 'CHANGE'
@@ -9,6 +9,9 @@ let _tasks = []
 
 const TasksStore = Object.assign({}, EventEmitter.prototype, {
     all: () => _tasks,
+    notCompleted: () => _tasks.filter(task => {
+        return task.status.name === 'new' || task.status.name === 'in progress'
+    }),
 
     addChangeListener: function(callback) {
         this.on(CHANGE, callback)
@@ -23,6 +26,12 @@ Dispatcher.register(action => {
     switch (action.actionType) {
         case GET_ALL_TASKS:
             _tasks = action.data
+            TasksStore.emit(CHANGE)
+            break
+
+        case ADD_TASK:
+            const task = action.data
+            _tasks.push(task)
             TasksStore.emit(CHANGE)
             break
 

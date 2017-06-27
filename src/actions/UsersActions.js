@@ -1,14 +1,14 @@
-import { LOG_IN, LOG_OUT, UNAUTHORIZED } from '../Constants'
-import Api from '../Api'
+import { ADD_USER, GET_ALL_USERS } from '../Constants'
 import Dispatcher from '../Dispatcher'
+import Api from '../Api'
 
 
-const actions = {
-    login: (credentials) => {
-        Api.auth.login(credentials)
+const UsersActions = {
+    all: () => {
+        Api.users.all()
             .then(response => {
                 Dispatcher.dispatch({
-                    actionType: LOG_IN,
+                    actionType: GET_ALL_USERS,
                     data: response.data
                 })
             })
@@ -17,24 +17,19 @@ const actions = {
             })
     },
 
-    logout: () => {
-        Api.auth.logout()
+    add: (data) => {
+        Api.users.add(data)
             .then(response => {
                 Dispatcher.dispatch({
-                    actionType: LOG_OUT
+                    actionType: ADD_USER,
+                    data: response.data
                 })
             })
             .catch(error => {
                 console.log(error)
             })
-    },
-
-    notAuthorized: () => {
-        Dispatcher.dispatch({
-            actionType: UNAUTHORIZED
-        })
     }
 }
 
 
-export default actions
+export default UsersActions

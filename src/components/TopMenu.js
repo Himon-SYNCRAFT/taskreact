@@ -41,6 +41,9 @@ class TopMenu extends React.Component {
                         <IndexLinkContainer to="/task/add">
                             <NavItem>Add task</NavItem>
                         </IndexLinkContainer>
+                        <IndexLinkContainer to="/user/add">
+                            <NavItem>Add user</NavItem>
+                        </IndexLinkContainer>
                         {authLinks}
                     </Nav>
                 </Navbar.Collapse>
@@ -52,7 +55,7 @@ class TopMenu extends React.Component {
 TopMenu.propTypes = {
     isLogged: PropTypes.bool.isRequired,
     user: PropTypes.shape({
-        name: PropTypes.string.isRequired
+        name: PropTypes.string
     })
 }
 

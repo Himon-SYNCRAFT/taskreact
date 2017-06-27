@@ -26,7 +26,7 @@ class TaskList extends Component {
     }
 
     onChange() {
-        const tasks = TasksStore.all()
+        const tasks = TasksStore.notCompleted()
         this.setState({ tasks })
     }
 
@@ -224,7 +224,7 @@ function TaskDetails(props) {
                     <Modal.Title>
                         <Row>
                             <Col md={11}>{taskName} ({status})</Col>
-                            <Col md={1} offset={11}>
+                            <Col md={1}>
                                 <Button onClick={props.close} bsStyle="danger" bsSize="xsmall">
                                     <Glyphicon glyph="remove"/>
                                 </Button>

@@ -1,25 +1,28 @@
 import axios from 'axios'
 import AuthActions from './actions/AuthActions'
+import Dispatcher from './Dispatcher'
+import { LOG_OUT } from './Constants'
+import { Promise } from 'es6-promise'
 
 
 const instance = axios.create({
-    // baseURL: 'http://danielzawlocki.pl/taskplus/api/',
-    baseURL: 'http://127.0.0.1:5000/',
+    baseURL: 'http://danielzawlocki.pl/taskplus/api/',
+    // baseURL: 'http://127.0.0.1:5000/',
     withCredentials: true
 })
 
-instance.interceptors.response.use(response => {
-    return response
-}, error => {
-    if (error.response.status === 401) {
-        AuthActions.logout()
-    }
-
-    if (error.response.status === 403) {
+instance.interceptors.response.use(undefined, error => {
+    if (!error.hasOwnProperty('response') || error.response === undefined) {
+        return Promise.reject(error)
+    } else if (error.response.status === 401) {
+        Dispatcher.dispatch({
+            actionType: LOG_OUT
+        })
+    } else if (error.response.status === 403) {
         AuthActions.notAuthorized()
     }
 
-    return error
+    return Promise.reject(error)
 })
 
 const Api = {
@@ -75,10 +78,14 @@ const Api = {
     users: {
         all: () => {
             return instance.get('/users')
+        },
+
+        add: (data) => {
+            return instance.post('/user', data)
         }
     },
 
-    userRoles: {
+    roles: {
         all: () => {
             return instance.get('/roles')
         }

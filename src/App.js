@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { Grid } from 'react-bootstrap'
 import { TaskList } from './components/TaskList'
 import LoginForm from './components/LoginForm'
+import { UserFormPage } from './components/UserForm'
 import TopMenu from './components/TopMenu'
-import TaskForm from './components/TaskForm'
+import { TaskFormPage } from './components/TaskForm'
 import ErrorModal from './components/ErrorModal'
 import AuthStore from './stores/AuthStore'
 import PropTypes from 'prop-types'
@@ -28,15 +29,15 @@ class App extends Component {
 
     componentDidMount() {
         AuthStore.addLogInListener(this.onChange)
+        AuthStore.addLogOutListener(this.onChange)
         AuthStore.addUnauthorizedListener(this.onNotAuthorized)
-        AuthStore.addLogInListener(this.onChange)
         this.onChange()
     }
 
     componentWillUnmount() {
-        AuthStore.removeChangeListener(this.onChange)
-        AuthStore.removeUnauthorizedListener(this.onNotAuthorized)
+        AuthStore.removeLogInListener(this.onChange)
         AuthStore.removeLogOutListener(this.onChange)
+        AuthStore.removeUnauthorizedListener(this.onNotAuthorized)
     }
 
     onChange() {
@@ -69,7 +70,8 @@ class App extends Component {
                     <TopMenu isLogged={this.state.isLogged} user={this.state.user} />
                     <Grid>
                         <PrivateRoute exact path="/" component={TaskList} user={this.state.user} />
-                        <PrivateRoute path="/task/add" component={TaskForm} user={this.state.user}/>
+                        <PrivateRoute path="/task/add" component={TaskFormPage} user={this.state.user}/>
+                        <PrivateRoute path="/user/add" component={UserFormPage} user={this.state.user}/>
                         <Route path="/login" render={() => {
                             return (
                                 <LoginForm isLogged={this.state.isLogged} />
