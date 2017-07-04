@@ -6,7 +6,7 @@ import { Promise } from 'es6-promise'
 
 
 const instance = axios.create({
-    baseURL: 'http://danielzawlocki.pl/taskplus/api/',
+    baseURL: 'https://danielzawlocki.pl/taskplus/api/',
     // baseURL: 'http://127.0.0.1:5000/',
     withCredentials: true
 })
